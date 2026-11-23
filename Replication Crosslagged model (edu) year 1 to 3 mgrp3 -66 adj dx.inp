@@ -1,0 +1,302 @@
+
+
+TITLE: 
+
+        Replication of the initial cross lagged model. 
+        Here we add all time points.
+
+
+DATA: FILE IS mdata.csv;
+
+  VARIABLE:
+          NAMES ARE  id age edu under grad mci
+          efl  ! EF left side
+          efr ! EF right side
+          ef  ! Binary EF (high, low)
+          efl0 - efl7  ! EFL before was from 0 to 8 (follow up).
+          at0 - at7    ! Attention
+          vs0 - vs7    ! Visual Spatial
+          mm0 - mm7    ! Memmory
+          gc0 - gc7    ! Global Cognition
+          vm0 - vm7    ! Verbal memory
+   ;
+
+
+usevariables =  gc0 gc1 gc2 gc3 gc4 ! year 3 only
+                age edu mci
+                efl1 efl2 efl3 efl4 
+                at1 at2 at3 at4
+                vs1 vs2 vs3 vs4
+                mm1 mm2 mm3 mm4
+                ;
+
+  GROUPING = ef (0 = LOW 1 = HIGH);
+
+  missing are all (9999);
+
+  useobservations = (id NE 66 and ef ne 9999);
+
+  auxiliary = id;
+
+ DEFINE:
+
+        standardize  gc0 gc1 gc2 gc3 gc4
+                age edu
+                efl1 efl2 efl3 efl4
+                at1 at2 at3 at4
+                vs1 vs2 vs3 vs4
+                mm1 mm2 mm3 mm4;             
+
+ ANALYSIS:
+          type = general;
+          estimator = mlr;
+
+ MODEL:
+
+ gc0 ON age   (yage)
+        edu   (yedu)
+        mci (ymci);
+ gc1 ON gc0   (gclag0) 
+        efl1   (efl0)
+        at1   (at0)
+        vs1   (vs0)
+        mm1   (mm0)
+        age   (yage)
+         edu   (yedu)
+        mci (ymci);
+ gc2 ON gc1   (gclag) 
+        efl2   (efl1)
+        at2   (at1)
+        vs2   (vs1)
+        mm2   (mm1)
+        age   (yage)
+         edu   (yedu)
+        mci (ymci);
+ gc3 ON gc2   (gclag) 
+        efl3   (efl1)
+        at3   (at1)
+        vs3   (vs1)
+        mm3   (mm1)
+        age   (yage)
+         edu   (yedu);
+ gc4 ON gc3   (gclag) 
+        efl4   (efl1)
+        at4   (at1)
+        vs4   (vs1)
+        mm4   (mm1)
+        age   (yage)
+        edu   (yedu)
+        mci (ymci);
+ 
+
+ efl1 ON age  (efl_age)
+       edu   (efl_edu)
+        mci (efl_mci);
+ efl2 ON efl1  (eflag)
+       age   (efl_age)
+       edu   (efl_edu)
+        mci (efl_mci);
+ efl3 ON efl2  (eflag)
+       age   (efl_age)
+       edu   (efl_edu)
+        mci (efl_mci);
+ efl4 ON efl3  (eflag)
+       age   (efl_age)
+       edu   (efl_edu)
+        mci (efl_mci);
+
+ at1 ON age (at_age)
+       edu   (at_edu)
+        mci (at_mci);
+ at2 ON at1 (atlag)
+       age (at_age)
+       edu   (at_edu)
+        mci (at_mci);
+ at3 ON at2 (atlag)
+       age (at_age)
+       edu   (at_edu)
+        mci (at_mci);
+ at4 ON at3 (atlag)
+       age (at_age)
+       edu   (at_edu)
+        mci (at_mci);
+ 
+ vs1 ON age (vs_age)
+       edu   (vs_edu)
+        mci (vs_mci);
+ vs2 ON vs1 (vslag)
+       age (vs_age)
+       edu   (vs_edu)
+        mci (vs_mci);
+ vs3 ON vs2 (vslag)
+       age (vs_age)
+       edu   (vs_edu)
+        mci (vs_mci);
+ vs4 ON vs3 (vslag)
+       age (vs_age)
+      edu   (vs_edu)
+        mci (vs_mci);
+ 
+ mm1 ON age (mm_age)
+       edu   (mm_edu)
+        mci (mm_mci);
+ mm2 ON mm1 (mmlag)
+       age (mm_age)
+       edu   (mm_edu)
+        mci (mm_mci);
+ mm3 ON mm2 (mmlag)
+       age (mm_age)
+       edu   (mm_edu)
+        mci (mm_mci);
+ mm4 ON mm3 (mmlag)
+       age (mm_age)
+       edu   (mm_edu)
+        mci (mm_mci);
+ 
+ efl1 with at1 mm1 vs1;
+ efl2 with at2 mm2 vs2;
+ efl3 with at3 mm3 vs3;
+ efl4 with at4 mm4 vs4;
+
+ at1 with mm1 vs1;
+ at2 with mm2 vs2;
+ at3 with mm3 vs3;
+ at4 with mm4 vs4;
+
+ mm1 with vs1;
+ mm2 with vs2;
+ mm3 with vs3;
+ mm4 with vs4;
+
+ MODEL LOW:
+
+ gc0 ON age   (xyage)
+        edu   (xyedu)
+        mci (xymci);
+ gc1 ON gc0   (xgclag0) 
+        efl1   (xefl0)
+        at1   (xat0)
+        vs1   (xvs0)
+        mm1   (xmm0)
+        age   (xyage)
+         edu   (xyedu)
+        mci (xymci);
+ gc2 ON gc1   (xgclag) 
+        efl2   (xefl1)
+        at2   (xat1)
+        vs2   (xvs1)
+        mm2   (xmm1)
+        age   (xyage)
+         edu   (xyedu)
+        mci (xymci);
+ gc3 ON gc2   (xgclag) 
+        efl3   (xefl1)
+        at3   (xat1)
+        vs3   (xvs1)
+        mm3   (xmm1)
+        age   (xyage)
+         edu   (xyedu)
+        mci (xymci);
+ gc4 ON gc3   (xgclag) 
+        efl4   (xefl1)
+        at4   (xat1)
+        vs4   (xvs1)
+        mm4   (xmm1)
+        age   (xyage)
+        edu   (xyedu)
+        mci (xymci);
+
+
+ efl1 ON age  (xefl_age)
+       edu   (xefl_edu)
+        mci (xefl_mci);
+ efl2 ON efl1  (xeflag)
+       age   (xefl_age)
+       edu   (xefl_edu)
+        mci (xefl_mci);
+ efl3 ON efl2  (xeflag)
+       age   (xefl_age)
+       edu   (xefl_edu)
+        mci (xefl_mci);
+ efl4 ON efl3  (xeflag)
+       age   (xefl_age)
+       edu   (xefl_edu)
+        mci (xefl_mci);
+
+
+ at1 ON age (xat_age)
+       edu   (xat_edu)
+        mci (xat_mci);
+ at2 ON at1 (xatlag)
+       age (xat_age)
+       edu   (xat_edu)
+        mci (xat_mci);
+ at3 ON at2 (xatlag)
+       age (xat_age)
+       edu   (xat_edu)
+        mci (xat_mci);
+ at4 ON at3 (xatlag)
+       age (xat_age)
+       edu   (xat_edu)
+        mci (xat_mci);
+
+ vs1 ON age (xvs_age)
+       edu   (xvs_edu)
+        mci (xvs_mci);
+ vs2 ON vs1 (xvslag)
+       age (xvs_age)
+       edu   (xvs_edu)
+        mci (xvs_mci);
+ vs3 ON vs2 (xvslag)
+       age (xvs_age)
+       edu   (xvs_edu)
+        mci (xvs_mci);
+ vs4 ON vs3 (xvslag)
+       age (xvs_age)
+      edu   (xvs_edu)
+        mci (xvs_mci);
+
+ mm1 ON age (xmm_age)
+       edu   (xmm_edu)
+        mci (xmm_mci);
+ mm2 ON mm1 (xmmlag)
+       age (xmm_age)
+       edu   (xmm_edu)
+        mci (xmm_mci);
+ mm3 ON mm2 (xmmlag)
+       age (xmm_age)
+       edu   (xmm_edu)
+        mci (xmm_mci);
+ mm4 ON mm3 (xmmlag)
+       age (xmm_age)
+       edu   (xmm_edu)
+        mci (xmm_mci);
+
+
+ MODEL CONSTRAINT:
+ ! differences between EF low and high.
+   new(d_efl d_vs d_at d_mm);
+   d_efl = efl1 - xefl1; 
+   d_vs = vs1 - xvs1;
+   d_at = at1 - xat1;
+   d_mm = mm1 - xmm1;
+
+   OUTPUT: cinterval;
+
+ 
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+

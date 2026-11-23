@@ -1,0 +1,281 @@
+
+
+TITLE: 
+
+        Replication of the initial cross lagged model. 
+        Here we add all time points.
+
+DATA: FILE IS mdata2.csv;
+
+  VARIABLE:
+          NAMES ARE  id age edu under grad mci
+          efl  ! EF left side
+          efr ! EF right side
+          ef  ! Binary EF (high, low)
+          efl0 - efl7  ! EFL before was from 0 to 8 (follow up).
+          at0 - at7    ! Attention
+          vs0 - vs7    ! Visual Spatial
+          mm0 - mm7    ! Memmory
+          gc0 - gc7    ! Global Cognition
+          vm0 - vm7    ! Verbal memory
+          gp
+   ;
+
+
+usevariables =  
+                gc0 gc1 gc2 gc3 gc4
+                age edu
+                efl1 efl2 efl3 efl4
+                at1 at2 at3 at4
+                vs1 vs2 vs3 vs4 
+                mm1 mm2 mm3 mm4 
+                ;
+
+  GROUPING = gp (1= low_mdd 2= high_mdd 3 = low_mci 4 = high_mci);
+
+ missing are all (9999);
+
+ useobs = (gp NE 9999 AND id NE 66);
+
+ auxiliary = id;
+
+ DEFINE:
+
+        standardize  gc0 gc1 gc2 gc3 gc4 
+                age edu
+                efl1 efl2 efl3 efl4 
+                at1 at2 at3 at4  
+                vs1 vs2 vs3 vs4
+                mm1 mm2 mm3 mm4 ;
+
+ ANALYSIS:
+          type = general;
+          estimator = mlr;
+
+ MODEL:
+
+ gc0 ON age   (yage)
+        edu   (yedu);
+ gc1 ON gc0   (gclag0) 
+        efl1   (efl0)
+        at1   (at0)
+        vs1   (vs0)
+        mm1   (mm0)
+        age   (yage)
+         edu   (yedu);
+ gc2 ON gc1   (gclag) 
+        efl2   (efl1)
+        at2   (at1)
+        vs2   (vs1)
+        mm2   (mm1)
+        age   (yage)
+         edu   (yedu);
+ gc3 ON gc2   (gclag) 
+        efl3   (efl1)
+        at3   (at1)
+        vs3   (vs1)
+        mm3   (mm1)
+        age   (yage)
+         edu   (yedu);
+ gc4 ON gc3   (gclag) 
+        efl4   (efl1)
+        at4   (at1)
+        vs4   (vs1)
+        mm4   (mm1)
+        age   (yage)
+        edu   (yedu);
+
+
+ efl1 ON age  (efl_age)
+       edu   (efl_edu);
+ efl2 ON efl1  (eflag)
+       age   (efl_age)
+       edu   (efl_edu);
+ efl3 ON efl2  (eflag)
+       age   (efl_age)
+       edu   (efl_edu);
+ efl4 ON efl3  (eflag)
+       age   (efl_age)
+       edu   (efl_edu);
+
+
+ at1 ON age (at_age)
+       edu   (at_edu);
+ at2 ON at1 (atlag)
+       age (at_age)
+       edu   (at_edu);
+ at3 ON at2 (atlag)
+       age (at_age)
+       edu   (at_edu);
+ at4 ON at3 (atlag)
+       age (at_age)
+       edu   (at_edu);
+
+ vs1 ON age (vs_age)
+       edu   (vs_edu);
+ vs2 ON vs1 (vslag)
+       age (vs_age)
+       edu   (vs_edu);
+ vs3 ON vs2 (vslag)
+       age (vs_age)
+       edu   (vs_edu);
+ vs4 ON vs3 (vslag)
+       age (vs_age)
+      edu   (vs_edu);
+
+ mm1 ON age (mm_age)
+       edu   (mm_edu);
+ mm2 ON mm1 (mmlag)
+       age (mm_age)
+       edu   (mm_edu);
+ mm3 ON mm2 (mmlag)
+       age (mm_age)
+       edu   (mm_edu);
+ mm4 ON mm3 (mmlag)
+       age (mm_age)
+       edu   (mm_edu);
+
+
+ efl1 with at1 mm1 vs1;
+ efl2 with at2 mm2 vs2;
+ efl3 with at3 mm3 vs3;
+ efl4 with at4 mm4 vs4;
+
+
+ at1 with mm1 vs1;
+ at2 with mm2 vs2;
+ at3 with mm3 vs3;
+ at4 with mm4 vs4;
+
+ mm1 with vs1;
+ mm2 with vs2;
+ mm3 with vs3;
+ mm4 with vs4;
+
+
+ MODEL low_mdd:
+
+ gc0 ON age   (xyage)
+        edu   (xyedu);
+ gc1 ON gc0   (xgclag0) 
+        efl1   (xefl0)
+        at1   (xat0)
+        vs1   (xvs0)
+        mm1   (xmm0)
+        age   (xyage)
+         edu   (xyedu);
+ gc2 ON gc1   (xgclag) 
+        efl2   (xefl1)
+        at2   (xat1)
+        vs2   (xvs1)
+        mm2   (xmm1)
+        age   (xyage)
+         edu   (xyedu);
+ gc3 ON gc2   (xgclag) 
+        efl3   (xefl1)
+        at3   (xat1)
+        vs3   (xvs1)
+        mm3   (xmm1)
+        age   (xyage)
+         edu   (xyedu);
+ gc4 ON gc3   (xgclag) 
+        efl4   (xefl1)
+        at4   (xat1)
+        vs4   (xvs1)
+        mm4   (xmm1)
+        age   (xyage)
+        edu   (xyedu);
+
+ MODEL low_mci:
+
+ gc0 ON age   (yyage)
+        edu   (yyedu);
+ gc1 ON gc0   (ygclag0) 
+        efl1   (yefl0)
+        at1   (yat0)
+        vs1   (yvs0)
+        mm1   (ymm0)
+        age   (yyage)
+         edu   (yyedu);
+ gc2 ON gc1   (ygclag) 
+        efl2   (yefl1)
+        at2   (yat1)
+        vs2   (yvs1)
+        mm2   (ymm1)
+        age   (yyage)
+         edu   (yyedu);
+ gc3 ON gc2   (ygclag) 
+        efl3   (yefl1)
+        at3   (yat1)
+        vs3   (yvs1)
+        mm3   (ymm1)
+        age   (yyage)
+         edu   (yyedu);
+ gc4 ON gc3   (ygclag) 
+        efl4   (yefl1)
+        at4   (yat1)
+        vs4   (yvs1)
+        mm4   (ymm1)
+        age   (yyage)
+        edu   (yyedu);
+ 
+
+ MODEL high_mdd:
+
+ gc0 ON age   (zyage)
+        edu   (zyedu);
+ gc1 ON gc0   (zgclag0) 
+        efl1   (zefl0)
+        at1   (zat0)
+        vs1   (zvs0)
+        mm1   (zmm0)
+        age   (zyage)
+         edu   (zyedu);
+ gc2 ON gc1   (zgclag) 
+        efl2   (zefl1)
+        at2   (zat1)
+        vs2   (zvs1)
+        mm2   (zmm1)
+        age   (zyage)
+         edu   (zyedu);
+ gc3 ON gc2   (zgclag) 
+        efl3   (zefl1)
+        at3   (zat1)
+        vs3   (zvs1)
+        mm3   (zmm1)
+        age   (zyage)
+         edu   (zyedu);
+ gc4 ON gc3   (zgclag) 
+        efl4   (zefl1)
+        at4   (zat1)
+        vs4   (zvs1)
+        mm4   (zmm1)
+        age   (zyage)
+        edu   (zyedu);
+
+
+ MODEL CONSTRAINT:
+   new(d_efl_d d_efl_c dd);
+   d_efl_d = zefl1 - xefl1; !MDD high - MDD low
+   d_efl_c = efl1 - yefl1; !MCI high - MCI low
+   dd = d_efl_d - d_efl_c; !High-low(MDD) - high-low(MCI)
+
+   OUTPUT: cinterval; ! stdyx residual cinterval tech4 tech1;
+
+ 
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
